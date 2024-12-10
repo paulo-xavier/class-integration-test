@@ -1,6 +1,8 @@
 const express = require('express'); 
 const app = express(); 
 
+app.use(express.json());
+
 let books = [];
 // bookId, bookName, bookStatus
 
@@ -12,6 +14,12 @@ app.post('/books', (req, res) => {
     if (!book.name || !book.status) {
         return res.status(400).json({
             error: 'Book and status are required!'
+        })
+    }
+
+    if(book.status != 'available'){
+        return res.status(400).json({
+            error: 'When you add a book it must start with the available status'
         })
     }
 
@@ -32,6 +40,7 @@ app.get('/books', (req, res) => {
 
 // PUT /books/:id
 app.put('/books/:id', (req, res) => {
+    
     const id = req.params.id;
     const book = req.body;
 
@@ -41,10 +50,56 @@ app.put('/books/:id', (req, res) => {
         })
     }
 
-    books[id].name = book.name;
-    books[id].status = book.status;
-    res.status(201).json(book);
+
+    // books[id].name = book.name;
+    // books[id].status = book.status;
+
+
+    // Percorrer o Array para achar o registro que contenha o ID informado
+    
+    books.forEach(book => {
+        
+        if(book.id == id) {
+            
+
+            
+        } else {
+
+        }
+    })
+
+
+    res.status(201).json(books[id]);
 
 })
 
 
+
+// DELETE /books/:id
+
+app.delete('/books/:id', (req, res) => {
+    const id = req.params.id; 
+    books.splice(id, 1);
+});
+
+
+// POST /loans 
+
+app.post('/books/loans/:id', (req, res) => {
+    const id = req.params.id;
+
+    books[id].status = 'lent';
+});
+
+
+
+
+// POST
+app.post('/books/return/:id', (req, res) => {
+    const id = req.params.id;
+
+    books[id].status = 'available';
+});
+
+
+module.exports = { app, books };
