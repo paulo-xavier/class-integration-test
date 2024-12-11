@@ -77,11 +77,11 @@ describe('Books API', () => {
     it('Update the information of an existing book', async() => {
         books.push({
             id: 1,
-            name: 'Price and Prejudice',
+            name: 'Pride and Prejudice',
             status: 'available'
         })
 
-        const id = 0;
+        const id = 1;
         const updatedBook = { name: 'Before you', status: 'lent'}
 
         const response = await request(app)
@@ -92,13 +92,31 @@ describe('Books API', () => {
 
         expect(response.body).toMatchObject(updatedBook);
         expect(books).toHaveLength(1); 
-
-        expect(books[id]).toMatchObject(updatedBook);
-        
         expect(response.body).toHaveProperty('id', 1);
-        
+        expect(books.find(book => book.id === id)).toMatchObject(updatedBook)
 
     })
 
 
+    it('Removing a book and certifying that it does not exist', async() => {
+
+        books.push({
+            id: 1,
+            name: 'Pride and Prejudice',
+            status: 'available'
+        })
+
+        const id = 1;
+
+        const response = await request(app)
+            .delete('/books/:id')
+            .expect(201)
+            .expect('Content-Type', /json/)
+
+            expect(books).toHaveLength(0);
+
+
+    })
+        
+    
 })

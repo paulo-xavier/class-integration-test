@@ -49,27 +49,27 @@ app.put('/books/:id', (req, res) => {
             error: 'Book and status are required!'
         })
     }
-
-
-    // books[id].name = book.name;
-    // books[id].status = book.status;
-
-
-    // Percorrer o Array para achar o registro que contenha o ID informado
     
-    books.forEach(book => {
-        
-        if(book.id == id) {
-            
+    let bookFound = false; 
 
-            
-        } else {
-
+    books.forEach(reg => {
+        if(reg.id == id) {
+            reg.name = book.name;
+            reg.status = book.status;
+            bookFound = true;
         }
-    })
+    });
 
+    if (bookFound) {
+        let book = books.find(reg => reg.id == id);
+        return res.status(201).json(book)
 
-    res.status(201).json(books[id]);
+    } else {
+        res.status(400).json({
+            error: 'Book not found!'
+        })
+    }
+    
 
 })
 
@@ -78,8 +78,22 @@ app.put('/books/:id', (req, res) => {
 // DELETE /books/:id
 
 app.delete('/books/:id', (req, res) => {
+    
     const id = req.params.id; 
-    books.splice(id, 1);
+
+    let bookIndex = books.findIndex(reg => reg.id == id);
+
+    if(bookIndex != -1) {
+        let removedBook = books.splice(bookIndex, 1)[0];
+        
+        return res.status(201).json(removedBook);
+    
+    } else {
+        return res.status(400).json({
+            error: 'Book not found'
+        })
+    }
+
 });
 
 
